@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lý Thuyết GML và Thực Hành - Buổi 2</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#111827",
+        primaryBorderColor: "#22d3ee",
+        primaryTextColor: "#e5e7eb",
+        lineColor: "#22d3ee",
+        secondaryColor: "#0b1222",
+        tertiaryColor: "#0b1222",
+        fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial",
+        fontSize: "16px",
+        labelBackground: "#1f2937",
+        labelTextColor: "#e5e7eb",
+        nodeBorder: "#22d3ee",
+        clusterBackground: "#0b1222",
+        clusterBorder: "#22d3ee"
+      }
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href="index.html">🏠 Trang chủ</a> > <span>Buổi 2</span>
+    </nav>
+    <h1>📘 Lý Thuyết GML và Thực Hành - Buổi 2</h1>
+
+    <section class="card">
+      <h2>1) 🔍 Lý Thuyết GML – Các Cú Pháp Quan Trọng</h2>
+      <h3>1. <code>keyboard_check</code></h3>
+      <p>Kiểm tra phím đang được giữ. Trả về <code>1</code> (giữ) hoặc <code>0</code> (không giữ).</p>
+      <p><strong>Ví dụ</strong>: <code>keyboard_check(ord("A"))</code> → kiểm tra phím A.</p>
+      <p><strong>Ứng dụng</strong>: Điều khiển di chuyển bằng W/A/S/D. 🚶</p>
+
+      <h3>2. <code>global.score</code></h3>
+      <p>Biến toàn cục để lưu điểm số. Khởi tạo: <code>global.score = 0;</code></p>
+      <p><strong>Ứng dụng</strong>: Vẽ điểm số bằng <code>draw_text()</code>. 📊</p>
+
+      <h3>3. <code>instance_create_layer</code></h3>
+      <p>Tạo object mới tại vị trí x, y trên layer.</p>
+      <pre><code>instance_create_layer(x, y, "Instances", o_enemy);</code></pre>
+      <p><strong>Ví dụ</strong>: <code>instance_create_layer(900, irandom_range(100,500), "Instances", o_enemy);</code></p>
+
+      <h3>4. <code>irandom_range</code></h3>
+      <p>Sinh số nguyên ngẫu nhiên trong khoảng [a, b].</p>
+      <p><strong>Ví dụ</strong>: <code>irandom_range(100, 500)</code> → số từ 100 đến 500.</p>
+
+      <h3>5. <code>alarm</code></h3>
+      <p>Bộ đếm giờ, chạy Alarm Event khi về 0.</p>
+      <p><strong>Ví dụ</strong>: <code>alarm[0] = room_speed * 2;</code> → Alarm 0 sau 2 giây.</p>
+
+      <h3>6. <code>instance_destroy</code></h3>
+      <p>Xóa object khỏi game. 🗑️</p>
+      <p><strong>Ứng dụng</strong>: Xóa enemy khi chạm tường hoặc player hết mạng.</p>
+
+      <h3>7. <code>with (other) { instance_destroy(); }</code></h3>
+      <p>Tác động lên đối tượng va chạm trong Collision Event.</p>
+      <pre><code>instance_destroy();
+with(other) instance_destroy();</code></pre>
+      <p><strong>Ví dụ</strong>: Xóa cả player và enemy khi va chạm.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) 🛠️ Hướng Dẫn Thực Hành</h2>
+      <h3>1. Tạo các đối tượng</h3>
+      <p>Trước tiên, hãy tạo các object cần thiết cho game:</p>
+      <ul class="tips">
+        <li><strong>o_player</strong>: Nhân vật chính có thể di chuyển</li>
+        <li><strong>o_enemy</strong>: Kẻ địch di chuyển từ phải sang trái</li>
+        <li><strong>o_spawner</strong>: Máy tạo kẻ địch định kỳ</li>
+        <li><strong>o_wall</strong>: Tường để kẻ địch biến mất khi chạm</li>
+      </ul>
+
+      <h3>2. Lập trình di chuyển nhân vật và điểm số</h3>
+      <div class="mermaid">
+flowchart TD
+  A["⚙️ Create Event"] --> B["Đặt hspeed=0, vspeed=0, spd=10"]
+  B --> C["Khởi tạo global.score=0"]
+  A --> D["🔄 Step Event"]
+  D --> E["Đọc phím: W/A/S/D"]
+  E --> F{"❓ Nhấn phím?"}
+  F -->|A| G["⬅ hspeed = -spd"]
+  F -->|D| H["➡ hspeed = spd"]
+  F -->|W| I["⬆ vspeed = -spd"]
+  F -->|S| J["⬇ vspeed = spd"]
+  F -->|Không| K["🛑 hspeed=0, vspeed=0"]
+  D --> L["✍️ Draw Event: Vẽ global.score"]
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+
+      <h3>3. Tạo các enemy</h3>
+      <div class="mermaid">
+flowchart TD
+  A["⚙️ Create Event: o_spawner"] --> B["⏰ alarm[0] = 120"]
+  B --> C["⏰ Alarm 0 Event"]
+  C --> D["👾 Tạo o_enemy tại x=900, y=irandom_range(100,500)"]
+  D --> B
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+
+      <h3>4. Tạo tường để enemy biến mất khi chạm</h3>
+      <p>Tạo object <code>o_wall</code> và đặt ở bên trái màn hình. Khi enemy chạm tường sẽ biến mất và tăng điểm.</p>
+
+      <h3>5. Tạo di chuyển cho enemy</h3>
+      <p>Trong Step Event của <code>o_enemy</code>, thêm lệnh:</p>
+      <pre><code>hspeed = -3;  // Di chuyển sang trái với tốc độ 3</code></pre>
+
+      <h3>6. Khi enemy va chạm với tường</h3>
+      <div class="mermaid">
+flowchart TD
+  A["💥 Collision Event: o_enemy vs o_wall"] --> B["➕ Tăng global.score"]
+  B --> C["🗑️ Xóa o_enemy"]
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+
+      <h3>7. Khi player va chạm với enemy</h3>
+      <div class="mermaid">
+flowchart TD
+  A["💥 Collision Event: o_player vs o_enemy"] --> B["🗑️ Xóa o_player"]
+  B --> C["🗑️ Xóa o_enemy"]
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>3) 🎯 Tóm tắt buổi học</h2>
+      <p>Trong buổi học này, chúng ta đã học được:</p>
+      <ul class="tips">
+        <li>✅ Các cú pháp GML cơ bản: keyboard_check, global.score, instance_create_layer</li>
+        <li>✅ Sử dụng irandom_range để tạo vị trí ngẫu nhiên</li>
+        <li>✅ Lập trình alarm để tạo spawner</li>
+        <li>✅ Xử lý va chạm và tăng điểm số</li>
+        <li>✅ Sử dụng with() để tác động lên đối tượng khác</li>
+      </ul>
+      <p><strong>Bài tập về nhà:</strong> Tạo game với hệ thống điểm số và spawner tạo kẻ địch ở vị trí ngẫu nhiên!</p>
+    </section>
+
+    <nav class="lesson-nav">
+      <a href="lesson1.html" class="nav-link">← Buổi 1: GameMaker Basic</a>
+      <a href="lesson3.html" class="nav-link">Buổi 3: Game Bắn Súng →</a>
+    </nav>
+  </main>
+</body>
+</html>

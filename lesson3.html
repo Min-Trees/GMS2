@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luồng Xây Dựng Game – Top-Down Shooter (Lesson3)</title>
+
+  <!-- Fonts & Base Styles -->
+  <style>
+    :root{
+      --bg:#0f172a;        /* slate-900 */
+      --card:#111827;      /* gray-900 */
+      --text:#e5e7eb;      /* gray-200 */
+      --muted:#9ca3af;     /* gray-400 */
+      --accent:#22d3ee;    /* cyan-400 */
+      --border:#1f2937;    /* gray-800 */
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    .wrap{max-width:1100px;margin:40px auto;padding:0 16px}
+    h1{font-size:28px;margin:0 0 18px}
+    h2{font-size:20px;margin:28px 0 10px;color:var(--accent)}
+    p,li{color:var(--text)}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      margin:18px 0;
+    }
+    .note{color:var(--muted);font-size:14px}
+    .list{border-collapse:collapse;width:100%;overflow:hidden;border-radius:12px;border:1px solid var(--border)}
+    .list th,.list td{padding:10px 12px;border-bottom:1px solid var(--border)}
+    .list th{color:var(--accent);text-align:left;background:#0b1222}
+    .tips li{margin:6px 0}
+    .kbd{padding:.2rem .45rem;border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;background:#0b1222}
+    /* Mermaid theme tweaks */
+    .mermaid{background:#0b1222;border:1px solid var(--border);border-radius:12px;padding:12px}
+    code {background:#0b1222;padding:2px 6px;border-radius:4px;color:#ff79c6;}
+  </style>
+
+  <!-- Mermaid (CDN) -->
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#111827",
+        primaryBorderColor: "#22d3ee",
+        primaryTextColor: "#e5e7eb",
+        lineColor: "#22d3ee",
+        secondaryColor: "#0b1222",
+        tertiaryColor: "#0b1222",
+        fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial",
+        fontSize: "16px",
+        labelBackground: "#1f2937",
+        labelTextColor: "#e5e7eb",
+        nodeBorder: "#22d3ee",
+        clusterBackground: "#0b1222",
+        clusterBorder: "#22d3ee"
+      }
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href="index.html">🏠 Trang chủ</a> > <span>Buổi 3</span>
+    </nav>
+    <h1>🔫 Hướng Dẫn Làm Game Bắn Súng Từ Trên Xuống (Lesson 3)</h1>
+
+    <section class="card">
+      <h2>1) 🎮 Luồng Chạy Của Game</h2>
+      <div class="mermaid">
+flowchart TD
+  A["🚀 Bắt đầu game"] --> B["🏠 Tải phòng chính"]
+  B --> C["🙂 Tạo nhân vật"]
+  B --> D["👾 Tạo kẻ địch"]
+  B --> E["🧱 Tạo tường"]
+  B --> F{"❓ Có máy sinh địch?"}
+  F -->|Có| G["⏰ Đặt đồng hồ sinh địch"]
+  F -->|Không| H["➡️ Tiếp tục"]
+
+  H --> I["🔄 Mỗi khung hình"]
+  I --> J["🙂 Nhân vật: Quay theo chuột + Nhấn phím"]
+  I --> K{"👾 Kẻ địch thấy nhân vật?"}
+  K -->|Có| L["👾 Đuổi theo, tốc độ=4"]
+  K -->|Không| M["👾 Đứng yên"]
+
+  J --> N{"🖱️ Nhấn chuột?"}
+  N -->|Có| O["🔫 Tạo đạn"]
+
+  I --> Q{"💥 Có va chạm?"}
+  Q -->|"Đạn vs Kẻ địch"| R["🗑️ Xóa đạn && kẻ địch"]
+  Q -->|"Nhân vật vs Kẻ địch"| S["💔 Mất mạng hoặc mất máu"]
+
+  G --> U["⏰ Đồng hồ về 0"]
+  U --> V["👾 Tạo thêm kẻ địch"]
+  V --> G
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) 🕹️ Điều Khiển Nhân Vật</h2>
+      <div class="mermaid">
+flowchart TD
+  A["🙂 Mỗi khung hình"] --> B{"❓ Nhấn phím W/A/S/D?"}
+  B -->|W| C["⬆ Đi lên"]
+  B -->|S| D["⬇ Đi xuống"]
+  B -->|A| E["⬅ Đi trái"]
+  B -->|D| F["➡ Đi phải"]
+  B -->|Không| G["🛑 Đứng yên"]
+
+  A --> H["👀 Quay mặt theo chuột"]
+  H --> I{"🖱️ Nhấn chuột?"}
+  I -->|Có| J["🔫 Bắn đạn"]
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) ⏰ Máy Sinh Kẻ Địch</h2>
+      <div class="mermaid">
+flowchart TD
+  A["⚙️ Tạo máy sinh"] --> B["⏰ Đặt đồng hồ = 30"]
+  B --> C["⏰ Đồng hồ chạy"]
+  C --> D["👾 Tạo kẻ địch"]
+  D --> B
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4) 📋 Các Bước Làm Game</h2>
+      <table class="list">
+        <thead>
+          <tr><th>Bước</th><th>Hành động</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Tạo sprite: <code>spr_player</code> (hình vuông xanh), <code>spr_enemy</code> (hình vuông đỏ), <code>spr_bullet</code> (hình tròn nhỏ), <code>spr_wall</code> (hình chữ nhật xám)</td></tr>
+          <tr><td>2</td><td>Tạo object: <code>o_player</code>, <code>o_enemy</code>, <code>o_bullet</code>, <code>o_wall</code>, <code>o_spawner</code></td></tr>
+          <tr><td>3</td><td>Tạo <code>Room_Main</code> (800x600) và đặt các object vào</td></tr>
+          <tr><td>4</td><td>Lập trình <code>Create</code> cho nhân vật: <code>direction = point_direction(x, y, mouse_x, mouse_y)</code></td></tr>
+          <tr><td>5</td><td>Lập trình <code>Step</code> cho nhân vật: di chuyển W/A/S/D + bắn chuột trái</td></tr>
+          <tr><td>6</td><td>Lập trình <code>Step</code> cho kẻ địch: <code>direction = point_direction(x, y, o_player.x, o_player.y); speed = 2</code></td></tr>
+          <tr><td>7</td><td>Lập trình <code>Collision</code>: đạn vs kẻ địch (xóa cả 2), nhân vật vs kẻ địch (game over)</td></tr>
+          <tr><td>8</td><td>Lập trình <code>Alarm</code> cho spawner: tạo kẻ địch mỗi 2 giây</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>5) 🛠️ Mẹo Tránh Lỗi</h2>
+      <ul class="tips">
+        <li>💥 Va chạm không hoạt động? → Kiểm tra <b>hình dạng va chạm</b>.</li>
+        <li>🔫 Đạn bay sai hướng? → Đặt <b>hướng trước tốc độ</b>.</li>
+        <li>👾 Kẻ địch không đuổi? → Kiểm tra <code>instance_exists(o_player)</code>.</li>
+        <li>⏰ Đồng hồ không chạy? → Nhớ <b>đặt lại đồng hồ</b> trong <b>Alarm Event</b>.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>6) 📘 Các Lệnh GML Quan Trọng</h2>
+      <div>
+        <h3>1. <code>point_direction(x1, y1, x2, y2)</code></h3>
+        <p>Giúp nhân vật quay mặt về một điểm. Ví dụ: Quay theo chuột hoặc kẻ địch! 😎</p>
+        <ul>
+          <li><b>x1, y1</b>: Vị trí của mình</li>
+          <li><b>x2, y2</b>: Vị trí mục tiêu</li>
+          <li>Kết quả: Một góc (0-360 độ)</li>
+        </ul>
+
+        <h3>2. <code>instance_exists(object)</code></h3>
+        <p>Kiểm tra xem một đối tượng còn tồn tại không. Ví dụ: "Kẻ địch còn sống không?" 🤔</p>
+
+        <h3>3. <code>with (target)</code></h3>
+        <p>Ra lệnh cho đối tượng khác. Ví dụ: Khi đạn chạm kẻ địch, xóa cả hai:</p>
+        <pre><code>instance_destroy();          // Xóa đạn
+with(other) instance_destroy();  // Xóa kẻ địch</code></pre>
+
+        <h3>4. <code>global.variable</code></h3>
+        <p>Biến dùng chung cho cả game. Ví dụ: <code>global.score = 0</code> để lưu điểm số. 📊</p>
+
+        <h3>5. <code>keyboard_check(key)</code></h3>
+        <p>Kiểm tra phím đang được giữ. Ví dụ: Nhấn <code>W</code> để đi lên. 🚶</p>
+
+        <h3>6. <code>keyboard_check_pressed(key)</code> & <code>keyboard_check_released(key)</code></h3>
+        <p>Kiểm tra khi phím vừa được nhấn hoặc thả. Dùng để bắn súng, nhảy, v.v. 🔫</p>
+        <table class="list">
+          <thead>
+            <tr><th>Lệnh</th><th>Ý nghĩa</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>keyboard_check_pressed</code></td><td>Phím vừa được nhấn</td></tr>
+            <tr><td><code>keyboard_check_released</code></td><td>Phím vừa được thả</td></tr>
+          </tbody>
+        </table>
+
+        <h3>7. <code>instance_create_layer(x, y, layer, object)</code></h3>
+        <p>Tạo đối tượng mới, như đạn hoặc kẻ địch, tại vị trí x, y. 💥</p>
+
+        <h3>8. <code>instance_destroy()</code></h3>
+        <p>Xóa đối tượng khỏi game. Ví dụ: Xóa đạn hoặc kẻ địch khi va chạm. 🗑️</p>
+
+        <h3>9. <code>direction</code> & <code>speed</code></h3>
+        <table class="list">
+          <thead>
+            <tr><th>Biến</th><th>Ý nghĩa</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>direction</code></td><td>Hướng di chuyển (0-360 độ)</td></tr>
+            <tr><td><code>speed</code></td><td>Tốc độ di chuyển</td></tr>
+          </tbody>
+        </table>
+        <p>Ví dụ: <code>direction = 90; speed = 4;</code> → Đi xuống. ⬇</p>
+
+        <h3>10. <code>mouse_x</code> & <code>mouse_y</code></h3>
+        <p>Lấy vị trí chuột để quay mặt hoặc bắn. 🖱️</p>
+
+        <h3>11. <code>lengthdir_x(len, dir)</code> & <code>lengthdir_y(len, dir)</code></h3>
+        <p>Đổi góc và độ dài thành tọa độ. Dùng để bắn đạn lệch hướng. 🎯</p>
+
+        <h3>12. <code>alarm[i]</code></h3>
+        <p>Đồng hồ đếm ngược, khi về 0 thì chạy lệnh. Dùng để sinh kẻ địch, đặt thời gian bắn, v.v. ⏰</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>7) 🎯 Tóm tắt buổi học</h2>
+      <p>Trong buổi học này, chúng ta đã học được:</p>
+      <ul class="tips">
+        <li>✅ Luồng chạy của game bắn súng từ trên xuống</li>
+        <li>✅ Điều khiển nhân vật quay theo chuột và bắn súng</li>
+        <li>✅ Tạo máy sinh kẻ địch tự động</li>
+        <li>✅ Các lệnh GML quan trọng: point_direction, instance_exists, with()</li>
+        <li>✅ Xử lý va chạm phức tạp giữa đạn, kẻ địch và nhân vật</li>
+        <li>✅ Sử dụng lengthdir_x/y để tính toán vị trí</li>
+      </ul>
+      <p><strong>Bài tập về nhà:</strong> Tạo game bắn súng hoàn chỉnh với nhiều loại kẻ địch và power-up!</p>
+    </section>
+
+    <nav class="lesson-nav">
+      <a href="lesson2.html" class="nav-link">← Buổi 2: Lý Thuyết GML</a>
+      <a href="index.html" class="nav-link">🏠 Về trang chủ</a>
+    </nav>
+  </main>
+</body>
+</html>
