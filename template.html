@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📚 Tài Liệu Tham Khảo GMS2 - Buổi 5</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#111827",
+        primaryBorderColor: "#22d3ee",
+        primaryTextColor: "#e5e7eb",
+        lineColor: "#22d3ee",
+        secondaryColor: "#0b1222",
+        tertiaryColor: "#0b1222",
+        fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial",
+        fontSize: "16px",
+        labelBackground: "#1f2937",
+        labelTextColor: "#e5e7eb",
+        nodeBorder: "#22d3ee",
+        clusterBackground: "#0b1222",
+        clusterBorder: "#22d3ee"
+      }
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href="index.html">🏠 Trang chủ</a> > <span>Buổi 5</span>
+    </nav>
+    <h1>📚 Tài Liệu Tham Khảo GMS2 - Buổi 5</h1>
+
+    <section class="card">
+      <h2>1) 📊 Tất Cả Thuộc Tính Cơ Bản</h2>
+      <p>Danh sách đầy đủ các thuộc tính mà mọi instance trong GameMaker đều có:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎯 Instance Properties"] --> B["📍 Position & Movement"]
+  A --> C["🎨 Visual"]
+  A --> D["⚙️ System"]
+  A --> E["🎵 Audio"]
+  A --> F["🎮 Input"]
+  A --> G["📊 Data"]
+  
+  B --> B1["x, y<br/>Vị trí hiện tại"]
+  B --> B2["hspeed, vspeed<br/>Tốc độ ngang/dọc"]
+  B --> B3["speed, direction<br/>Tốc độ & hướng"]
+  B --> B4["friction<br/>Ma sát"]
+  B --> B5["gravity, gravity_direction<br/>Trọng lực"]
+  
+  C --> C1["sprite_index<br/>Sprite hiện tại"]
+  C --> C2["image_index<br/>Frame hiện tại"]
+  C --> C3["image_speed<br/>Tốc độ animation"]
+  C --> C4["visible<br/>Có hiển thị không"]
+  C --> C5["alpha<br/>Độ trong suốt"]
+  C --> C6["image_angle<br/>Góc xoay"]
+  C --> C7["image_xscale, image_yscale<br/>Tỷ lệ phóng to"]
+  
+  D --> D1["alarm[0-11]<br/>12 đồng hồ"]
+  D --> D2["depth<br/>Lớp hiển thị"]
+  D --> D3["persistent<br/>Tồn tại qua room"]
+  D --> D4["solid<br/>Có va chạm không"]
+  D --> D5["mask_index<br/>Hình dạng va chạm"]
+  
+  E --> E1["audio_play_sound<br/>Phát âm thanh"]
+  E --> E2["audio_stop_sound<br/>Dừng âm thanh"]
+  E --> E3["audio_sound_gain<br/>Âm lượng"]
+  
+  F --> F1["mouse_x, mouse_y<br/>Vị trí chuột"]
+  F --> F2["keyboard_lastkey<br/>Phím cuối nhấn"]
+  
+  G --> G1["id<br/>ID duy nhất"]
+  G --> G2["object_index<br/>Loại object"]
+  G --> G3["room<br/>Room hiện tại"]
+      </div>
+      
+      <h3>🔍 Mô tả chi tiết:</h3>
+      <table class="list">
+        <thead>
+          <tr><th>Thuộc tính</th><th>Kiểu dữ liệu</th><th>Mô tả</th><th>Ví dụ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>x, y</code></td><td>Real</td><td>Vị trí pixel trên màn hình</td><td><code>x = 100; y = 200;</code></td></tr>
+          <tr><td><code>hspeed, vspeed</code></td><td>Real</td><td>Tốc độ di chuyển ngang/dọc</td><td><code>hspeed = 5; vspeed = -3;</code></td></tr>
+          <tr><td><code>speed</code></td><td>Real</td><td>Tốc độ tổng (pixel/frame)</td><td><code>speed = 8;</code></td></tr>
+          <tr><td><code>direction</code></td><td>Real</td><td>Hướng di chuyển (0-360°)</td><td><code>direction = 90;</code></td></tr>
+          <tr><td><code>friction</code></td><td>Real</td><td>Ma sát (0-1)</td><td><code>friction = 0.1;</code></td></tr>
+          <tr><td><code>gravity</code></td><td>Real</td><td>Lực hấp dẫn</td><td><code>gravity = 0.5;</code></td></tr>
+          <tr><td><code>sprite_index</code></td><td>Sprite</td><td>Sprite đang hiển thị</td><td><code>sprite_index = spr_player;</code></td></tr>
+          <tr><td><code>image_index</code></td><td>Real</td><td>Frame hiện tại trong animation</td><td><code>image_index = 0;</code></td></tr>
+          <tr><td><code>image_speed</code></td><td>Real</td><td>Tốc độ animation (frame/frame)</td><td><code>image_speed = 0.5;</code></td></tr>
+          <tr><td><code>visible</code></td><td>Boolean</td><td>Có hiển thị không</td><td><code>visible = false;</code></td></tr>
+          <tr><td><code>alpha</code></td><td>Real</td><td>Độ trong suốt (0-1)</td><td><code>alpha = 0.5;</code></td></tr>
+          <tr><td><code>image_angle</code></td><td>Real</td><td>Góc xoay sprite (độ)</td><td><code>image_angle = 45;</code></td></tr>
+          <tr><td><code>image_xscale, image_yscale</code></td><td>Real</td><td>Tỷ lệ phóng to X/Y</td><td><code>image_xscale = -1;</code></td></tr>
+          <tr><td><code>alarm[0-11]</code></td><td>Real</td><td>12 bộ đếm ngược</td><td><code>alarm[0] = 60;</code></td></tr>
+          <tr><td><code>depth</code></td><td>Real</td><td>Lớp hiển thị (số nhỏ = trên)</td><td><code>depth = -100;</code></td></tr>
+          <tr><td><code>persistent</code></td><td>Boolean</td><td>Tồn tại qua room</td><td><code>persistent = true;</code></td></tr>
+          <tr><td><code>solid</code></td><td>Boolean</td><td>Có va chạm không</td><td><code>solid = true;</code></td></tr>
+          <tr><td><code>mask_index</code></td><td>Sprite</td><td>Hình dạng va chạm</td><td><code>mask_index = spr_collision;</code></td></tr>
+        </tbody>
+      </table>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) 🎮 Hàm Điều Khiển Input</h2>
+      <p>Các hàm để đọc input từ bàn phím, chuột và gamepad:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎮 Input Functions"] --> B["⌨️ Keyboard"]
+  A --> C["🖱️ Mouse"]
+  A --> D["🎮 Gamepad"]
+  A --> E["📱 Touch"]
+  
+  B --> B1["keyboard_check(key)<br/>Kiểm tra phím đang giữ"]
+  B --> B2["keyboard_check_pressed(key)<br/>Phím vừa nhấn"]
+  B --> B3["keyboard_check_released(key)<br/>Phím vừa thả"]
+  B --> B4["keyboard_clear(key)<br/>Xóa trạng thái phím"]
+  
+  C --> C1["mouse_check_button(button)<br/>Kiểm tra nút chuột"]
+  C --> C2["mouse_x, mouse_y<br/>Vị trí chuột"]
+  C --> C3["mouse_wheel_up()<br/>Cuộn chuột lên"]
+  C --> C4["mouse_wheel_down()<br/>Cuộn chuột xuống"]
+  
+  D --> D1["gamepad_button_check(button)<br/>Kiểm tra nút gamepad"]
+  D --> D2["gamepad_axis_value(axis)<br/>Giá trị trục gamepad"]
+  
+  E --> E1["device_mouse_check_button(button)<br/>Kiểm tra touch"]
+  E --> E2["device_mouse_x_to_gui()<br/>Chuyển đổi tọa độ"]
+      </div>
+      
+      <h3>💻 Ví dụ sử dụng Input:</h3>
+      <pre><code>// Keyboard - Di chuyển nhân vật
+if (keyboard_check(vk_left)) {
+    hspeed = -5;
+} else if (keyboard_check(vk_right)) {
+    hspeed = 5;
+} else {
+    hspeed = 0;
+}
+
+// Keyboard - Nhảy (chỉ khi vừa nhấn)
+if (keyboard_check_pressed(vk_space)) {
+    vspeed = -10;
+}
+
+// Mouse - Bắn súng
+if (mouse_check_button(mb_left)) {
+    // Tạo đạn hướng về chuột
+    var bullet = instance_create_layer(x, y, "Instances", o_bullet);
+    bullet.direction = point_direction(x, y, mouse_x, mouse_y);
+    bullet.speed = 8;
+}
+
+// Mouse - Drag & Drop
+if (mouse_check_button_pressed(mb_left)) {
+    if (point_in_rectangle(mouse_x, mouse_y, x-16, y-16, x+16, y+16)) {
+        dragging = true;
+    }
+}
+
+// Gamepad - Điều khiển
+if (gamepad_button_check(0, gp_face1)) {
+    // Nút A trên gamepad
+    vspeed = -10;
+}
+
+var left_stick_x = gamepad_axis_value(0, gp_axislh);
+if (left_stick_x != 0) {
+    hspeed = left_stick_x * 5;
+}</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>3) 🎨 Hàm Vẽ (Drawing Functions)</h2>
+      <p>Các hàm để vẽ hình ảnh, text và hình học cơ bản:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎨 Drawing Functions"] --> B["🖼️ Sprites & Images"]
+  A --> C["📝 Text & Fonts"]
+  A --> D["📐 Shapes"]
+  A --> E["🎨 Colors & Effects"]
+  
+  B --> B1["draw_sprite(spr, subimg, x, y)<br/>Vẽ sprite"]
+  B --> B2["draw_sprite_ext(spr, subimg, x, y, xscale, yscale, rot, color, alpha)<br/>Vẽ sprite với hiệu ứng"]
+  B --> B3["draw_sprite_stretched(spr, subimg, x, y, w, h)<br/>Vẽ sprite kéo dãn"]
+  B --> B4["draw_sprite_tiled(spr, subimg, x, y)<br/>Vẽ sprite lặp lại"]
+  
+  C --> C1["draw_text(x, y, string)<br/>Vẽ text"]
+  C --> C2["draw_text_ext(x, y, string, sep, w)<br/>Vẽ text với xuống dòng"]
+  C --> C3["draw_set_font(font)<br/>Đặt font"]
+  C --> C4["draw_set_halign(halign)<br/>Căn chỉnh ngang"]
+  
+  D --> D1["draw_rectangle(x1, y1, x2, y2, outline)<br/>Vẽ hình chữ nhật"]
+  D --> D2["draw_circle(x, y, radius, outline)<br/>Vẽ hình tròn"]
+  D --> D3["draw_line(x1, y1, x2, y2)<br/>Vẽ đường thẳng"]
+  D --> D4["draw_ellipse(x1, y1, x2, y2, outline)<br/>Vẽ hình elip"]
+  
+  E --> E1["draw_set_color(color)<br/>Đặt màu vẽ"]
+  E --> E2["draw_set_alpha(alpha)<br/>Đặt độ trong suốt"]
+  E --> E3["draw_set_blend_mode(mode)<br/>Đặt chế độ hòa trộn"]
+  E --> E4["draw_set_halign(halign)<br/>Căn chỉnh text"]
+      </div>
+      
+      <h3>💻 Ví dụ sử dụng Drawing:</h3>
+      <pre><code>// Draw Event - Vẽ UI và HUD
+// Vẽ thanh máu
+draw_set_color(c_red);
+draw_rectangle(10, 10, 10 + (hp/max_hp) * 200, 30, false);
+
+// Vẽ điểm số
+draw_set_color(c_white);
+draw_set_font(fnt_score);
+draw_set_halign(fa_left);
+draw_text(10, 50, "Score: " + string(score));
+
+// Vẽ sprite với hiệu ứng
+draw_sprite_ext(spr_player, 0, x, y, 
+    image_xscale, image_yscale, image_angle, 
+    c_white, alpha);
+
+// Vẽ text với xuống dòng
+draw_text_ext(10, 100, "Welcome to the game!\nPress SPACE to jump", 
+    20, 300);
+
+// Vẽ hình tròn cho vùng tác động
+draw_set_color(c_yellow);
+draw_set_alpha(0.3);
+draw_circle(x, y, 100, false);
+draw_set_alpha(1);
+
+// Vẽ đường nối giữa 2 điểm
+draw_set_color(c_blue);
+draw_line(x, y, target_x, target_y);</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>4) 🎯 Hàm Instance & Object</h2>
+      <p>Các hàm để tạo, xóa và quản lý instances:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎯 Instance Functions"] --> B["➕ Create & Destroy"]
+  A --> C["🔍 Find & Check"]
+  A --> D["📊 Count & List"]
+  A --> E["🎮 Control"]
+  
+  B --> B1["instance_create_layer(x, y, layer, obj)<br/>Tạo instance"]
+  B --> B2["instance_create_depth(x, y, depth, obj)<br/>Tạo với depth"]
+  B --> B3["instance_destroy()<br/>Xóa instance hiện tại"]
+  B --> B4["instance_destroy(id)<br/>Xóa instance theo ID"]
+  
+  C --> C1["instance_exists(obj)<br/>Kiểm tra tồn tại"]
+  C --> C2["instance_nearest(x, y, obj)<br/>Tìm gần nhất"]
+  C --> C3["instance_furthest(x, y, obj)<br/>Tìm xa nhất"]
+  C --> C4["instance_place(x, y, obj)<br/>Kiểm tra vị trí"]
+  
+  D --> D1["instance_number(obj)<br/>Đếm số lượng"]
+  D --> D2["instance_find(obj, n)<br/>Tìm instance thứ n"]
+  D --> D3["with(obj) { code }<br/>Thực hiện với tất cả"]
+  
+  E --> E1["instance_change(obj, keep)<br/>Thay đổi loại object"]
+  E --> E2["instance_deactivate_region()<br/>Tắt vùng"]
+  E --> E3["instance_activate_region()<br/>Bật vùng"]
+      </div>
+      
+      <h3>💻 Ví dụ sử dụng Instance:</h3>
+      <pre><code>// Tạo đạn khi bắn
+if (mouse_check_button_pressed(mb_left)) {
+    var bullet = instance_create_layer(x, y, "Instances", o_bullet);
+    bullet.direction = point_direction(x, y, mouse_x, mouse_y);
+    bullet.speed = 10;
+}
+
+// Tìm enemy gần nhất
+var nearest_enemy = instance_nearest(x, y, o_enemy);
+if (nearest_enemy != noone) {
+    var dist = point_distance(x, y, nearest_enemy.x, nearest_enemy.y);
+    if (dist < 100) {
+        // Bắn về phía enemy
+        direction = point_direction(x, y, nearest_enemy.x, nearest_enemy.y);
+    }
+}
+
+// Xóa tất cả enemy khi hết level
+with (o_enemy) {
+    instance_destroy();
+}
+
+// Đếm số enemy còn lại
+var enemy_count = instance_number(o_enemy);
+if (enemy_count == 0) {
+    // Level hoàn thành
+    show_message("Level Complete!");
+}
+
+// Kiểm tra va chạm trước khi di chuyển
+if (!instance_place(x + hspeed, y, o_wall)) {
+    x += hspeed;
+} else {
+    hspeed = 0; // Dừng lại khi va chạm
+}
+
+// Thay đổi sprite khi nhận damage
+if (hp <= 0) {
+    instance_change(o_player_dead, true);
+}</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>5) 🧮 Hàm Toán Học & Logic</h2>
+      <p>Các hàm tính toán và logic cơ bản:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🧮 Math & Logic"] --> B["📐 Geometry"]
+  A --> C["🔢 Numbers"]
+  A --> D["🎲 Random"]
+  A --> E["⚖️ Comparison"]
+  
+  B --> B1["point_distance(x1, y1, x2, y2)<br/>Khoảng cách 2 điểm"]
+  B --> B2["point_direction(x1, y1, x2, y2)<br/>Góc giữa 2 điểm"]
+  B --> B3["lengthdir_x(len, dir)<br/>Chuyển góc thành X"]
+  B --> B4["lengthdir_y(len, dir)<br/>Chuyển góc thành Y"]
+  
+  C --> C1["abs(value)<br/>Giá trị tuyệt đối"]
+  C --> C2["sign(value)<br/>Dấu của số"]
+  C --> C3["round(value)<br/>Làm tròn"]
+  C --> C4["floor(value)<br/>Làm tròn xuống"]
+  C --> C5["ceil(value)<br/>Làm tròn lên"]
+  C --> C6["clamp(value, min, max)<br/>Giới hạn giá trị"]
+  
+  D --> D1["random(max)<br/>Số thực ngẫu nhiên"]
+  D --> D2["irandom(max)<br/>Số nguyên ngẫu nhiên"]
+  D --> D3["irandom_range(min, max)<br/>Số nguyên trong khoảng"]
+  D --> D4["choose(val1, val2, val3)<br/>Chọn ngẫu nhiên"]
+  
+  E --> E1["min(val1, val2)<br/>Giá trị nhỏ nhất"]
+  E --> E2["max(val1, val2)<br/>Giá trị lớn nhất"]
+  E --> E3["median(val1, val2, val3)<br/>Giá trị trung bình"]
+  E --> E4["lerp(a, b, t)<br/>Nội suy tuyến tính"]
+      </div>
+      
+      <h3>💻 Ví dụ sử dụng Math:</h3>
+      <pre><code>// Tính khoảng cách và hướng
+var dist = point_distance(x, y, target_x, target_y);
+var angle = point_direction(x, y, target_x, target_y);
+
+// Di chuyển theo hướng
+if (dist > 5) {
+    x += lengthdir_x(speed, angle);
+    y += lengthdir_y(speed, angle);
+}
+
+// Giới hạn vị trí trong màn hình
+x = clamp(x, 0, room_width);
+y = clamp(y, 0, room_height);
+
+// Di chuyển mượt mà đến mục tiêu
+x = lerp(x, target_x, 0.1);
+y = lerp(y, target_y, 0.1);
+
+// Tạo vị trí ngẫu nhiên
+var random_x = irandom_range(100, room_width - 100);
+var random_y = irandom_range(100, room_height - 100);
+
+// Chọn màu ngẫu nhiên
+var colors = [c_red, c_blue, c_green, c_yellow];
+var random_color = choose(colors[0], colors[1], colors[2], colors[3]);
+
+// Tính toán damage
+var base_damage = 10;
+var critical_hit = (random(1) < 0.1); // 10% chance
+var final_damage = base_damage * (critical_hit ? 2 : 1);
+
+// Làm tròn để snap to grid
+x = round(x / 32) * 32;
+y = round(y / 32) * 32;</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>6) 🎵 Hàm Âm Thanh (Audio Functions)</h2>
+      <p>Các hàm để phát và quản lý âm thanh:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎵 Audio Functions"] --> B["🔊 Play & Stop"]
+  A --> C["🎚️ Control"]
+  A --> D["📊 Status"]
+  A --> E["🎼 Music"]
+  
+  B --> B1["audio_play_sound(snd, priority, loop)<br/>Phát âm thanh"]
+  B --> B2["audio_stop_sound(snd)<br/>Dừng âm thanh"]
+  B --> B3["audio_stop_all()<br/>Dừng tất cả"]
+  B --> B4["audio_sound_gain(snd, volume, time)<br/>Điều chỉnh âm lượng"]
+  
+  C --> C1["audio_sound_pitch(snd, pitch)<br/>Điều chỉnh tần số"]
+  C --> C2["audio_sound_pan(snd, pan)<br/>Điều chỉnh kênh trái/phải"]
+  C --> C3["audio_master_gain(volume)<br/>Âm lượng tổng"]
+  
+  D --> D1["audio_is_playing(snd)<br/>Kiểm tra đang phát"]
+  D --> D2["audio_sound_length(snd)<br/>Độ dài âm thanh"]
+  D --> D3["audio_sound_get_track_position(snd)<br/>Vị trí hiện tại"]
+  
+  E --> E1["audio_play_music(mus, loop)<br/>Phát nhạc nền"]
+  E --> E2["audio_stop_music()<br/>Dừng nhạc nền"]
+  E --> E3["audio_pause_music()<br/>Tạm dừng nhạc"]
+  E --> E4["audio_resume_music()<br/>Tiếp tục nhạc"]
+      </div>
+      
+      <h3>💻 Ví dụ sử dụng Audio:</h3>
+      <pre><code>// Phát âm thanh khi bắn
+if (mouse_check_button_pressed(mb_left)) {
+    audio_play_sound(snd_shoot, 0, false);
+}
+
+// Phát âm thanh khi va chạm
+if (place_meeting(x, y, o_enemy)) {
+    audio_play_sound(snd_hit, 0, false);
+    // Tạo hiệu ứng âm thanh ngẫu nhiên
+    audio_sound_pitch(snd_hit, random_range(0.8, 1.2));
+}
+
+// Phát nhạc nền
+if (!audio_is_playing(snd_background)) {
+    audio_play_music(mus_background, true);
+}
+
+// Điều chỉnh âm lượng theo khoảng cách
+var nearest_player = instance_nearest(x, y, o_player);
+if (nearest_player != noone) {
+    var dist = point_distance(x, y, nearest_player.x, nearest_player.y);
+    var volume = 1 - (dist / 500); // Giảm âm lượng khi xa
+    volume = clamp(volume, 0, 1);
+    audio_sound_gain(snd_ambient, volume, 0);
+}
+
+// Tạm dừng nhạc khi game pause
+if (game_paused) {
+    audio_pause_music();
+} else {
+    audio_resume_music();
+}
+
+// Phát âm thanh với hiệu ứng
+audio_play_sound(snd_explosion, 0, false);
+audio_sound_pitch(snd_explosion, random_range(0.5, 1.5));
+audio_sound_pan(snd_explosion, random_range(-1, 1));</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>7) 🎯 Hàm Va Chạm (Collision Functions)</h2>
+      <p>Các hàm để kiểm tra và xử lý va chạm:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎯 Collision Functions"] --> B["📍 Position Check"]
+  A --> C["🔄 Movement Check"]
+  A --> D["📏 Distance Check"]
+  A --> E["🎯 Point Check"]
+  
+  B --> B1["place_meeting(x, y, obj)<br/>Kiểm tra vị trí"]
+  B --> B2["place_empty(x, y)<br/>Kiểm tra vị trí trống"]
+  B --> B3["place_free(x, y)<br/>Kiểm tra vị trí tự do"]
+  
+  C --> C1["move_contact(obj, dir, maxdist)<br/>Di chuyển đến va chạm"]
+  C --> C2["move_outside_all(obj, dir)<br/>Di chuyển ra khỏi va chạm"]
+  C --> C3["move_bounce_all(obj, adv)<br/>Nảy khỏi va chạm"]
+  
+  D --> D1["collision_point(x, y, obj, prec, notme)<br/>Va chạm tại điểm"]
+  D --> D2["collision_rectangle(x1, y1, x2, y2, obj, prec, notme)<br/>Va chạm trong hình chữ nhật"]
+  D --> D3["collision_circle(x, y, radius, obj, prec, notme)<br/>Va chạm trong hình tròn"]
+  
+  E --> E1["point_in_rectangle(px, py, x1, y1, x2, y2)<br/>Điểm trong hình chữ nhật"]
+  E --> E2["point_in_circle(px, py, cx, cy, radius)<br/>Điểm trong hình tròn"]
+  E --> E3["point_in_triangle(px, py, x1, y1, x2, y2, x3, y3)<br/>Điểm trong tam giác"]
+      </div>
+      
+      <h3>💻 Ví dụ sử dụng Collision:</h3>
+      <pre><code>// Kiểm tra va chạm trước khi di chuyển
+if (!place_meeting(x + hspeed, y, o_wall)) {
+    x += hspeed;
+} else {
+    hspeed = 0; // Dừng lại khi va chạm
+}
+
+// Di chuyển đến va chạm
+if (move_contact(o_enemy, direction, 5)) {
+    // Đã chạm enemy, xử lý damage
+    hp -= 10;
+}
+
+// Kiểm tra va chạm trong vùng
+var enemies_in_range = collision_circle(x, y, 100, o_enemy, false, false);
+if (enemies_in_range != noone) {
+    // Có enemy trong tầm bắn
+    show_message("Enemy detected!");
+}
+
+// Kiểm tra click trong vùng
+if (mouse_check_button_pressed(mb_left)) {
+    if (point_in_circle(mouse_x, mouse_y, x, y, 50)) {
+        // Click vào vùng tròn
+        selected = true;
+    }
+}
+
+// Kiểm tra va chạm với nhiều object
+if (place_meeting(x, y, o_enemy) || place_meeting(x, y, o_obstacle)) {
+    // Va chạm với enemy hoặc obstacle
+    vspeed = -5; // Nảy lên
+}
+
+// Di chuyển ra khỏi va chạm
+if (place_meeting(x, y, o_wall)) {
+    move_outside_all(o_wall, direction);
+}
+
+// Kiểm tra vị trí an toàn để spawn
+var safe_x = irandom_range(50, room_width - 50);
+var safe_y = irandom_range(50, room_height - 50);
+if (place_empty(safe_x, safe_y)) {
+    instance_create_layer(safe_x, safe_y, "Instances", o_powerup);
+}</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>8) 🎯 Tóm tắt buổi học</h2>
+      <p>Trong buổi học này, chúng ta đã học được:</p>
+      <ul class="tips">
+        <li>✅ Tất cả thuộc tính cơ bản trong GameMaker (x, y, speed, sprite_index, alarm, depth...)</li>
+        <li>✅ Hàm điều khiển input (keyboard, mouse, gamepad, touch)</li>
+        <li>✅ Hàm vẽ (draw_sprite, draw_text, draw_shapes, colors)</li>
+        <li>✅ Hàm instance (create, destroy, find, count, with)</li>
+        <li>✅ Hàm toán học (point_distance, lerp, clamp, random)</li>
+        <li>✅ Hàm âm thanh (play, stop, control, music)</li>
+        <li>✅ Hàm va chạm (place_meeting, collision, move_contact)</li>
+      </ul>
+      <p><strong>Bài tập về nhà:</strong> Sử dụng các hàm đã học để tạo một game hoàn chỉnh với đầy đủ tính năng âm thanh, va chạm và hiệu ứng!</p>
+    </section>
+
+    <nav class="lesson-nav">
+      <a href="lesson4.html" class="nav-link">← Buổi 4: Thuộc Tính & Thể Loại Game</a>
+      <a href="index.html" class="nav-link">🏠 Về trang chủ</a>
+    </nav>
+  </main>
+</body>
+</html>
+

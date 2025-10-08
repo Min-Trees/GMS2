@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dangerous Maze - Buổi 4</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#111827",
+        primaryBorderColor: "#22d3ee",
+        primaryTextColor: "#e5e7eb",
+        lineColor: "#22d3ee",
+        secondaryColor: "#0b1222",
+        tertiaryColor: "#0b1222",
+        fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial",
+        fontSize: "16px",
+        labelBackground: "#1f2937",
+        labelTextColor: "#e5e7eb",
+        nodeBorder: "#22d3ee",
+        clusterBackground: "#0b1222",
+        clusterBorder: "#22d3ee"
+      }
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href="index.html">🏠 Trang chủ</a> > <span>Buổi 4</span>
+    </nav>
+
+    <h1>🎮 Dangerous Maze - Buổi 4</h1>
+
+    <!-- 1) Mục tiêu -->
+    <section class="card">
+      <h2>1) 🎯 Mục tiêu buổi học</h2>
+      <p>Xây dựng trò chơi mê cung nơi người chơi điều khiển nhân vật vượt tường và bẫy để đến đích an toàn.</p>
+      <ul class="tips">
+        <li><strong>Hiểu</strong> cách dùng <em>Room</em> để bố trí mê cung.</li>
+        <li><strong>Thực hành</strong> điều khiển nhân vật bằng bàn phím, kiểm tra va chạm.</li>
+        <li><strong>Áp dụng</strong> <code>place_meeting()</code> để di chuyển mượt và không xuyên tường.</li>
+        <li><strong>Sử dụng</strong> <em>Tileset</em> để dựng bản đồ nhanh, đẹp và dễ chỉnh sửa.</li>
+      </ul>
+    </section>
+
+    <!-- 2) Flowchart -->
+    <section class="card">
+      <h2>2) 🔍 Luồng hoạt động của game</h2>
+      <div class="mermaid">
+flowchart TD
+  A["🚀 Bắt đầu game"] --> B["🎨 Chuẩn bị sprite, object, tileset"]
+  B --> C["🏗️ Vẽ mê cung trong Room (Tiles)"]
+  C --> D["🎮 Điều khiển nhân vật"]
+  D --> E{"❓ Va chạm gì?"}
+  E -->|🧱 Tường| F["⛔ Chặn lại (không xuyên)"]
+  E -->|⚠️ Bẫy| G["💀 Thua → Restart"]
+  E -->|🏁 Đích| H["🏆 Thắng → Restart/Next"]
+  F --> D
+  G --> D
+  H --> D
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <!-- 3) Chuẩn bị tài nguyên -->
+    <section class="card">
+      <h2>3) 🧰 Chuẩn bị tài nguyên</h2>
+      <h3>a) Sprites & Objects</h3>
+      <ul class="tips">
+        <li><strong>spr_player</strong> → <em>obj_player</em>: nhân vật chính.</li>
+        <li><strong>spr_wall</strong> → <em>obj_wall</em>: tường cản đường.</li>
+        <li><strong>spr_trap</strong> → <em>obj_trap</em>: bẫy nguy hiểm.</li>
+        <li><strong>spr_goal</strong> → <em>obj_goal</em>: điểm đích.</li>
+      </ul>
+
+      <h3>b) Room & Layout</h3>
+      <ul class="tips">
+        <li>Tạo <strong>Room</strong> (ví dụ: <code>rm_maze</code>) kích thước phù hợp màn hình.</li>
+        <li>Sắp xếp <em>obj_wall</em>, <em>obj_trap</em>, <em>obj_goal</em> thành lối đi hợp lý.</li>
+        <li>Đặt <em>obj_player</em> tại vị trí bắt đầu.</li>
+      </ul>
+    </section>
+
+    <!-- 4) Di chuyển với place_meeting -->
+    <section class="card">
+      <h2>4) 🎮 Di chuyển nhân vật bằng <code>place_meeting()</code></h2>
+      <p><code>place_meeting(nx, ny, obj)</code> kiểm tra <em>nếu đặt hitbox</em> của instance hiện tại ở vị trí <code>(nx, ny)</code> thì có chạm vào bất kỳ instance nào của <code>obj</code> không. Hàm này <strong>không tự di chuyển</strong>; bạn cần gán toạ độ nếu an toàn.</p>
+      <h3>a) Dùng “đúng chuẩn” (tách trục & kiểm tra trước khi gán)</h3>
+      <pre><code>/// Step Event - obj_player
+var spd = 4;
+var h = keyboard_check(vk_right) - keyboard_check(vk_left);
+var v = keyboard_check(vk_down)  - keyboard_check(vk_up);
+
+// Trục X
+if (h != 0) {
+    var nx = x + h * spd;
+    if (!place_meeting(nx, y, obj_wall)) {
+        x = nx;
+    }
+}
+
+// Trục Y
+if (v != 0) {
+    var ny = y + v * spd;
+    if (!place_meeting(x, ny, obj_wall)) {
+        y = ny;
+    }
+}</code></pre>
+
+      <h3>b) Di chuyển chéo mượt hơn (chuẩn hóa vận tốc)</h3>
+      <pre><code>var spd = 4;
+var dx  = keyboard_check(vk_right) - keyboard_check(vk_left);
+var dy  = keyboard_check(vk_down)  - keyboard_check(vk_up);
+
+// Chuẩn hóa để chéo không nhanh hơn
+if (dx != 0 || dy != 0) {
+    var len = point_distance(0, 0, dx, dy);
+    dx /= len; dy /= len;
+}
+
+var nx = x + dx * spd;
+if (!place_meeting(nx, y, obj_wall)) x = nx;
+
+var ny = y + dy * spd;
+if (!place_meeting(x, ny, obj_wall)) y = ny;</code></pre>
+
+      <h3>c) “Bước sát tường” (trượt đến cạnh theo từng pixel)</h3>
+      <pre><code>/// Move toward target on one axis by 1px steps until blocked
+function move_axis_safely(target, axis_is_x) {
+    var step = (target - (axis_is_x ? x : y));
+    var sgn  = sign(step);
+    while (step != 0) {
+        var nx = x + (axis_is_x ? sgn : 0);
+        var ny = y + (axis_is_x ? 0   : sgn);
+        if (!place_meeting(nx, ny, obj_wall)) {
+            x = nx; y = ny;
+            step -= sgn;
+        } else break;
+    }
+}
+
+// Ví dụ dùng trong Step:
+move_axis_safely(x + dx * spd, true);
+move_axis_safely(y + dy * spd, false);</code></pre>
+
+      <h3>d) Lỗi thường gặp & cách sửa</h3>
+      <ul class="tips">
+        <li>Gọi <code>place_meeting(x, y, obj_wall)</code> <em>sau khi</em> đã đổi <code>x/y</code> → Hãy kiểm tra <strong>trước</strong>, rồi mới gán.</li>
+        <li>Sprite có khoảng trống làm mask lệch → chỉnh <strong>Origin, Separate Collision Mask</strong> hoặc dùng <code>mask_index</code> riêng.</li>
+        <li>Đặt <em>solid</em> cho <code>obj_wall</code> và vừa code va chạm → xung đột. Khuyến nghị: bỏ <em>solid</em>, chỉ dùng code.</li>
+      </ul>
+    </section>
+
+    <!-- 5) Va chạm & trạng thái -->
+    <section class="card">
+      <h2>5) ⚠️ Va chạm & trạng thái thắng/thua</h2>
+      <h3>a) Thua khi chạm bẫy</h3>
+      <pre><code>/// Collision Event (obj_player with obj_trap)
+show_message("💀 Bạn đã thua! Thử lại nhé.");
+game_restart();</code></pre>
+
+      <h3>b) Thắng khi chạm đích</h3>
+      <pre><code>/// Collision Event (obj_player with obj_goal)
+show_message("🏆 Chúc mừng! Bạn đã đến đích!");
+game_restart(); // hoặc room_goto_next();</code></pre>
+    </section>
+
+    <!-- 6) Tileset & Tile Collision -->
+    <section class="card">
+      <h2>6) 🧱 Tileset & xây dựng bản đồ mê cung</h2>
+
+      <h3>a) Tileset là gì?</h3>
+      <p><strong>Tileset</strong> là một ảnh chứa nhiều ô nhỏ (tile) có kích thước đều (ví dụ 32×32). Khi vào Room Editor, bạn vẽ các ô này lên <em>Tile Layer</em> để tạo nền hoặc tường. Lưu ý: <strong>tile mặc định không có va chạm</strong>.</p>
+
+      <h3>b) Quy trình tạo Tileset & vẽ map</h3>
+      <ul class="tips">
+        <li>Chuẩn bị ảnh PNG theo lưới (16/32/48 px).</li>
+        <li>Trong IDE: <em>Create → Tileset</em> → chọn ảnh → đặt <strong>Tile width/height</strong> khớp kích thước.</li>
+        <li>Mở <strong>Room</strong> → tab <strong>Tiles</strong> → chọn Tileset → <strong>vẽ</strong> tường/nền theo lưới.</li>
+        <li>(Tùy chọn) Cấu hình <em>Auto-Tile</em> để vẽ bo góc/viền nhanh.</li>
+      </ul>
+
+      <h3>c) Làm sao để tile “chặn” nhân vật?</h3>
+      <p>Vì tile chỉ hiển thị, bạn có 2 cách phổ biến để tạo va chạm:</p>
+
+      <h4>• Cách 1 — Đơn giản (khuyến nghị cho cấp 2): <em>Đặt obj_wall vô hình trùng với tiles</em></h4>
+      <ul class="tips">
+        <li>Vẽ map bằng Tiles cho đẹp và nhanh.</li>
+        <li>Thả các instance <code>obj_wall</code> phủ lên vùng tường (snap grid 32×32).</li>
+        <li>Kiểm tra va chạm bằng <code>place_meeting(..., obj_wall)</code>.</li>
+      </ul>
+
+      <h4>• Cách 2 — Nâng cao: <em>Dùng Tilemap API để coi tile là “solid”</em></h4>
+      <p>Ý tưởng: lấy tile ở pixel sắp di chuyển đến; nếu có tile trên layer tường thì chặn.</p>
+      <pre><code>/// Create Event (obj_player)
+// Đặt đúng tên layer tile tường trong Room
+tile_layer_id = layer_get_id("Tiles_Wall");
+tilemap_id    = layer_tilemap_get_id(tile_layer_id);
+tile_w = 32; tile_h = 32;
+
+// Kiểm tra có tile tại pixel?
+function solid_at_pixel(px, py) {
+    var t = tilemap_get_at_pixel(tilemap_id, px, py);
+    return (t != 0); // 0 = rỗng, !=0 = có tile
+}</code></pre>
+
+      <p>Di chuyển an toàn với tilemap (tách trục):</p>
+      <pre><code>/// Step Event (obj_player)
+var spd = 4;
+var dx  = keyboard_check(vk_right) - keyboard_check(vk_left);
+var dy  = keyboard_check(vk_down)  - keyboard_check(vk_up);
+
+if (dx != 0 || dy != 0) {
+    var len = point_distance(0,0,dx,dy);
+    dx /= len; dy /= len;
+}
+
+// Trục X
+var nx = x + dx * spd;
+if (!solid_at_pixel(nx, y)) x = nx;
+
+// Trục Y
+var ny = y + dy * spd;
+if (!solid_at_pixel(x, ny)) y = ny;</code></pre>
+
+      <p>Kiểm tra sát cạnh chuẩn hơn (4 góc hitbox):</p>
+      <pre><code>function blocked_rect(nx, ny, half_w, half_h) {
+    return solid_at_pixel(nx - half_w, ny - half_h)
+        || solid_at_pixel(nx + half_w, ny - half_h)
+        || solid_at_pixel(nx - half_w, ny + half_h)
+        || solid_at_pixel(nx + half_w, ny + half_h);
+}
+
+// Ví dụ dùng:
+// if (!blocked_rect(nx, y, 8, 10)) x = nx;
+// if (!blocked_rect(x, ny, 8, 10)) y = ny;</code></pre>
+
+      <h3>d) So sánh nhanh 2 cách</h3>
+      <table>
+        <tr><th>Tiêu chí</th><th>Cách 1: obj_wall vô hình</th><th>Cách 2: Tilemap API</th></tr>
+        <tr><td>Độ khó</td><td>Dễ (phù hợp cấp 2)</td><td>Trung bình – nâng cao</td></tr>
+        <tr><td>Hiệu suất</td><td>Tốt</td><td>Rất tốt</td></tr>
+        <tr><td>Độ chính xác</td><td>Cao nếu bám grid</td><td>Cao (cần code hitbox)</td></tr>
+        <tr><td>Chỉnh map</td><td>Vẽ Tiles + thả wall</td><td>Vẽ Tiles (không cần wall)</td></tr>
+      </table>
+
+      <h3>e) Lỗi thường gặp với Tiles & mẹo</h3>
+      <ul class="tips">
+        <li>Tiles không chặn được nhân vật → Vì tile không collision. Hãy dùng Cách 1 hoặc Cách 2.</li>
+        <li>Lệch lưới (sprite/mask không khớp 32×32) → Chỉnh grid & mask cho trùng.</li>
+        <li>Sai tên layer khi dùng Tilemap API → Kiểm tra đúng tên (ví dụ: <code>"Tiles_Wall"</code>).</li>
+        <li>Origin sprite không hợp lý → Đặt center/bottom-center để hitbox ổn định.</li>
+      </ul>
+
+      <h3>f) Checklist xây map nhanh – gọn – đúng</h3>
+      <ul class="tips">
+        <li>[ ] Ảnh tiles cắt đúng kích thước (16/32/48 px).</li>
+        <li>[ ] Room bật grid đúng size (ví dụ 32×32).</li>
+        <li>[ ] Vẽ nền và tường bằng Tiles.</li>
+        <li>[ ] Chọn 1 cách collision: <em>obj_wall</em> hoặc <em>Tilemap API</em> (không trộn lung tung).</li>
+        <li>[ ] Test: đi sát tường/bám góc, chạm bẫy/đích.</li>
+      </ul>
+    </section>
+
+    <!-- 7) Mẹo tránh lỗi -->
+    <section class="card">
+      <h2>7) 💡 Mẹo tránh lỗi</h2>
+      <ul class="tips">
+        <li>Đặt tên tài nguyên có tiền tố: <code>spr_</code>, <code>obj_</code>, <code>rm_</code> để dễ tìm.</li>
+        <li>Giữ cùng kích thước ô (ví dụ 32×32) cho sprite tường và grid Room.</li>
+        <li>Nếu nhân vật bị kẹt góc, giảm tốc độ xuống 3 hoặc 2 để kiểm tra.</li>
+        <li>Test thường xuyên: thử đi sát tường, chạm bẫy/đích để kiểm tra logic.</li>
+      </ul>
+    </section>
+
+    <!-- 8) Tóm tắt -->
+    <section class="card">
+      <h2>8) 🎯 Tóm tắt buổi học</h2>
+      <p>Trong buổi học này, chúng ta đã học được:</p>
+      <ul class="tips">
+        <li>✅ Dựng mê cung bằng <strong>Tileset</strong>, sắp xếp bố cục trong <strong>Room</strong>.</li>
+        <li>✅ Di chuyển nhân vật mượt mà với <code>place_meeting()</code> để tránh xuyên tường.</li>
+        <li>✅ Xử lý <strong>va chạm</strong> để tạo điều kiện <em>thắng/thua</em>.</li>
+      </ul>
+      <p><strong>Bài tập về nhà:</strong> Tạo thêm 1 bản đồ mê cung mới khó hơn; thêm 1 loại bẫy (ví dụ bẫy chuyển động) và chỉnh tốc độ cho cân bằng.</p>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="lesson-nav">
+      <a href="lesson3.html" class="nav-link">← Buổi 3: Top-Down Shooter cơ bản</a>
+      <a href="lesson5.html" class="nav-link">Buổi 5: Platformer cơ bản →</a>
+    </nav>
+  </main>
+</body>
+</html>

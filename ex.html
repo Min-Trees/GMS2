@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎮 Thuộc Tính GameMaker & Thể Loại Game - Buổi 4</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#111827",
+        primaryBorderColor: "#22d3ee",
+        primaryTextColor: "#e5e7eb",
+        lineColor: "#22d3ee",
+        secondaryColor: "#0b1222",
+        tertiaryColor: "#0b1222",
+        fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial",
+        fontSize: "16px",
+        labelBackground: "#1f2937",
+        labelTextColor: "#e5e7eb",
+        nodeBorder: "#22d3ee",
+        clusterBackground: "#0b1222",
+        clusterBorder: "#22d3ee"
+      }
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href="index.html">🏠 Trang chủ</a> > <span>Buổi 4</span>
+    </nav>
+    <h1>🎮 Thuộc Tính GameMaker & Thể Loại Game - Buổi 4</h1>
+
+    <section class="card">
+      <h2>1) 📊 Các Thuộc Tính Cơ Bản Trong GameMaker</h2>
+      <p>Thuộc tính là những thông tin mà mỗi đối tượng trong game đều có. Hãy xem sơ đồ phân loại:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎯 Thuộc tính GameMaker"] --> B["📍 Vị trí & Di chuyển"]
+  A --> C["🎨 Hiển thị"]
+  A --> D["⚙️ Hệ thống"]
+  A --> E["🎵 Âm thanh"]
+  
+  B --> B1["x, y<br/>Tọa độ hiện tại"]
+  B --> B2["hspeed, vspeed<br/>Tốc độ ngang/dọc"]
+  B --> B3["speed, direction<br/>Tốc độ & hướng tổng"]
+  B --> B4["friction<br/>Ma sát"]
+  
+  C --> C1["sprite_index<br/>Hình ảnh hiện tại"]
+  C --> C2["image_index<br/>Frame hiện tại"]
+  C --> C3["image_speed<br/>Tốc độ animation"]
+  C --> C4["visible<br/>Có hiển thị không"]
+  
+  D --> D1["alarm[0-11]<br/>12 đồng hồ đếm ngược"]
+  D --> D2["depth<br/>Lớp hiển thị"]
+  D --> D3["persistent<br/>Tồn tại qua room"]
+  D --> D4["solid<br/>Có va chạm không"]
+  
+  E --> E1["audio_play_sound<br/>Phát âm thanh"]
+  E --> E2["audio_stop_sound<br/>Dừng âm thanh"]
+      </div>
+      
+      <h3>🔍 Chi tiết các thuộc tính quan trọng:</h3>
+      <ul class="tips">
+        <li><strong>x, y</strong>: Vị trí của đối tượng trên màn hình (pixel)</li>
+        <li><strong>hspeed, vspeed</strong>: Tốc độ di chuyển theo trục X và Y</li>
+        <li><strong>speed, direction</strong>: Tốc độ tổng và hướng di chuyển (0-360 độ)</li>
+        <li><strong>sprite_index</strong>: Sprite đang được hiển thị</li>
+        <li><strong>image_index</strong>: Frame hiện tại trong animation</li>
+        <li><strong>alarm[0-11]</strong>: 12 bộ đếm ngược có thể sử dụng</li>
+        <li><strong>depth</strong>: Lớp hiển thị (số càng nhỏ càng ở trên)</li>
+      </ul>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) 🎮 Thể Loại Game: Platformer (Game Nhảy)</h2>
+      <p>Platformer là game nhân vật nhảy qua các platform. Hãy xem cách tạo:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🚀 Platformer Game"] --> B["🏃 Di chuyển ngang"]
+  A --> C["🦘 Nhảy"]
+  A --> D["🌍 Trọng lực"]
+  A --> E["🏗️ Platform"]
+  
+  B --> B1["A/D: hspeed = ±5"]
+  C --> C1["Space: vspeed = -10"]
+  D --> D1["vspeed += 0.5 mỗi frame"]
+  E --> E1["Collision với platform"]
+  
+  F["⚙️ Step Event"] --> G["Đọc phím A/D"]
+  G --> H["Đọc phím Space"]
+  H --> I["Áp dụng trọng lực"]
+  I --> J["Kiểm tra va chạm platform"]
+      </div>
+      
+      <h3>💻 Code mẫu cho Platformer:</h3>
+      <pre><code>// Step Event - Platformer
+// Di chuyển ngang
+if (keyboard_check(vk_left)) {
+    hspeed = -5;
+} else if (keyboard_check(vk_right)) {
+    hspeed = 5;
+} else {
+    hspeed = 0;
+}
+
+// Nhảy (chỉ khi đang đứng trên platform)
+if (keyboard_check_pressed(vk_space) && place_meeting(x, y+1, o_platform)) {
+    vspeed = -10;
+}
+
+// Trọng lực
+vspeed += 0.5;
+
+// Giới hạn tốc độ rơi
+if (vspeed > 15) vspeed = 15;</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>3) 🏎️ Thể Loại Game: Racing (Đua Xe)</h2>
+      <p>Game đua xe với điều khiển mượt mà và góc nhìn từ trên xuống:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🏎️ Racing Game"] --> B["🎮 Điều khiển"]
+  A --> C["🛣️ Đường đua"]
+  A --> D["🏁 Checkpoint"]
+  A --> E["⏱️ Thời gian"]
+  
+  B --> B1["W: Tăng tốc"]
+  B --> B2["S: Phanh"]
+  B --> B3["A/D: Rẽ trái/phải"]
+  
+  C --> C1["Sprite đường đua"]
+  C --> C2["Collision với vách"]
+  
+  D --> D1["Tăng điểm khi qua"]
+  E --> E1["Hiển thị thời gian"]
+      </div>
+      
+      <h3>💻 Code mẫu cho Racing:</h3>
+      <pre><code>// Step Event - Racing
+// Tăng tốc
+if (keyboard_check(vk_up)) {
+    speed += 0.2;
+    if (speed > 8) speed = 8;
+}
+
+// Phanh
+if (keyboard_check(vk_down)) {
+    speed -= 0.3;
+    if (speed < 0) speed = 0;
+}
+
+// Rẽ
+if (keyboard_check(vk_left)) {
+    direction -= 3;
+}
+if (keyboard_check(vk_right)) {
+    direction += 3;
+}
+
+// Ma sát tự nhiên
+speed *= 0.95;</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>4) 🧩 Thể Loại Game: Puzzle (Giải Đố)</h2>
+      <p>Game giải đố với các khối có thể di chuyển và sắp xếp:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🧩 Puzzle Game"] --> B["📦 Khối di chuyển"]
+  A --> C["🎯 Mục tiêu"]
+  A --> D["✅ Kiểm tra thắng"]
+  A --> E["🔄 Reset level"]
+  
+  B --> B1["Click để chọn khối"]
+  B --> B2["Drag để di chuyển"]
+  B --> B3["Kiểm tra vị trí hợp lệ"]
+  
+  C --> C1["Vị trí đích cho mỗi khối"]
+  D --> D1["Tất cả khối đúng vị trí?"]
+  E --> E1["Quay lại vị trí ban đầu"]
+      </div>
+      
+      <h3>💻 Code mẫu cho Puzzle:</h3>
+      <pre><code>// Mouse Left Pressed - Puzzle
+if (point_in_rectangle(mouse_x, mouse_y, x-16, y-16, x+16, y+16)) {
+    selected = true;
+    offset_x = mouse_x - x;
+    offset_y = mouse_y - y;
+}
+
+// Mouse Left Released
+if (selected && !mouse_check_button(mb_left)) {
+    selected = false;
+    // Snap to grid
+    x = round(x/32) * 32;
+    y = round(y/32) * 32;
+    // Check if puzzle solved
+    check_puzzle_solved();
+}
+
+// Mouse Drag
+if (selected) {
+    x = mouse_x - offset_x;
+    y = mouse_y - offset_y;
+}</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>5) 🎯 Thể Loại Game: Tower Defense</h2>
+      <p>Game phòng thủ với tháp bắn và kẻ địch di chuyển theo đường:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎯 Tower Defense"] --> B["🏗️ Xây tháp"]
+  A --> C["👾 Kẻ địch"]
+  A --> D["🛤️ Đường đi"]
+  A --> E["💰 Tiền tệ"]
+  
+  B --> B1["Click để đặt tháp"]
+  B --> B2["Tháp tự động bắn"]
+  B --> B3["Nâng cấp tháp"]
+  
+  C --> C1["Spawn theo đường"]
+  C --> C2["Có máu và tốc độ"]
+  C --> C3["Trả tiền khi chết"]
+  
+  D --> D1["Pathfinding cho enemy"]
+  E --> E1["Mua tháp và nâng cấp"]
+      </div>
+      
+      <h3>💻 Code mẫu cho Tower Defense:</h3>
+      <pre><code>// Step Event - Tower
+// Tìm kẻ địch gần nhất
+var nearest_enemy = instance_nearest(x, y, o_enemy);
+if (nearest_enemy != noone) {
+    var dist = point_distance(x, y, nearest_enemy.x, nearest_enemy.y);
+    if (dist < 100) { // Tầm bắn
+        // Bắn đạn
+        if (alarm[0] <= 0) {
+            var bullet = instance_create_layer(x, y, "Instances", o_bullet);
+            bullet.target = nearest_enemy;
+            alarm[0] = 30; // Tốc độ bắn
+        }
+    }
+}
+
+// Alarm 0 - Tạo đạn
+var bullet = instance_create_layer(x, y, "Instances", o_bullet);
+bullet.direction = point_direction(x, y, target.x, target.y);
+bullet.speed = 8;</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>6) 🎲 Thể Loại Game: RPG (Nhập Vai)</h2>
+      <p>Game nhập vai với hệ thống level, kinh nghiệm và inventory:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🎲 RPG Game"] --> B["👤 Nhân vật"]
+  A --> C["⚔️ Chiến đấu"]
+  A --> D["📦 Inventory"]
+  A --> E["📊 Stats"]
+  
+  B --> B1["Level, HP, MP"]
+  B --> B2["Kinh nghiệm (EXP)"]
+  B --> B3["Kỹ năng và spell"]
+  
+  C --> C1["Turn-based hoặc real-time"]
+  C --> C2["Damage calculation"]
+  C --> C3["Loot system"]
+  
+  D --> D1["Vũ khí, áo giáp"]
+  D --> D2["Potion, item"]
+  E --> E1["Strength, Defense, Speed"]
+      </div>
+      
+      <h3>💻 Code mẫu cho RPG:</h3>
+      <pre><code>// Create Event - Player
+level = 1;
+exp = 0;
+exp_to_next = 100;
+hp = 100;
+max_hp = 100;
+mp = 50;
+max_mp = 50;
+strength = 10;
+defense = 5;
+
+// Function - Gain Experience
+function gain_exp(amount) {
+    exp += amount;
+    while (exp >= exp_to_next) {
+        exp -= exp_to_next;
+        level_up();
+    }
+}
+
+// Function - Level Up
+function level_up() {
+    level++;
+    exp_to_next = level * 100;
+    max_hp += 20;
+    max_mp += 10;
+    hp = max_hp; // Full heal
+    mp = max_mp;
+    strength += 2;
+    defense += 1;
+    show_message("Level Up! Now level " + string(level));
+}</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>7) 🛠️ Các Hàm Hữu Ích Cho Mọi Thể Loại Game</h2>
+      <p>Những hàm này có thể dùng trong bất kỳ game nào:</p>
+      
+      <div class="mermaid">
+flowchart TD
+  A["🛠️ Hàm Hữu Ích"] --> B["📍 Vị trí & Khoảng cách"]
+  A --> C["🎯 Tìm kiếm"]
+  A --> D["🎲 Ngẫu nhiên"]
+  A --> E["📊 Toán học"]
+  
+  B --> B1["point_distance(x1,y1,x2,y2)<br/>Tính khoảng cách"]
+  B --> B2["point_direction(x1,y1,x2,y2)<br/>Tính góc"]
+  B --> B3["lengthdir_x(len,dir)<br/>Chuyển góc thành X"]
+  
+  C --> C1["instance_nearest(x,y,obj)<br/>Tìm gần nhất"]
+  C --> C2["instance_exists(obj)<br/>Kiểm tra tồn tại"]
+  C --> C3["with(obj) { code }<br/>Thực hiện với tất cả"]
+  
+  D --> D1["irandom(max)<br/>Số nguyên ngẫu nhiên"]
+  D --> D2["random(max)<br/>Số thực ngẫu nhiên"]
+  D --> D3["choose(val1,val2,val3)<br/>Chọn ngẫu nhiên"]
+  
+  E --> E1["abs(value)<br/>Giá trị tuyệt đối"]
+  E --> E2["clamp(val,min,max)<br/>Giới hạn giá trị"]
+  E --> E3["lerp(a,b,t)<br/>Nội suy tuyến tính"]
+      </div>
+      
+      <h3>📝 Ví dụ sử dụng:</h3>
+      <pre><code>// Tìm enemy gần nhất và bắn về phía nó
+var enemy = instance_nearest(x, y, o_enemy);
+if (enemy != noone) {
+    var dist = point_distance(x, y, enemy.x, enemy.y);
+    if (dist < 200) {
+        direction = point_direction(x, y, enemy.x, enemy.y);
+        speed = 5;
+    }
+}
+
+// Tạo item ngẫu nhiên
+var item_type = choose("health", "mana", "weapon");
+var item = instance_create_layer(x, y, "Instances", o_item);
+item.item_type = item_type;
+
+// Di chuyển mượt mà đến vị trí
+x = lerp(x, target_x, 0.1);
+y = lerp(y, target_y, 0.1);</code></pre>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <section class="card">
+      <h2>8) 🎯 Tóm tắt buổi học</h2>
+      <p>Trong buổi học này, chúng ta đã học được:</p>
+      <ul class="tips">
+        <li>✅ Các thuộc tính cơ bản trong GameMaker (x, y, speed, sprite_index, alarm)</li>
+        <li>✅ Cách tạo Platformer game với trọng lực và nhảy</li>
+        <li>✅ Cách tạo Racing game với điều khiển mượt mà</li>
+        <li>✅ Cách tạo Puzzle game với drag & drop</li>
+        <li>✅ Cách tạo Tower Defense với hệ thống tháp bắn</li>
+        <li>✅ Cách tạo RPG với level, exp và stats</li>
+        <li>✅ Các hàm hữu ích cho mọi thể loại game</li>
+      </ul>
+      <p><strong>Bài tập về nhà:</strong> Chọn một thể loại game yêu thích và thử tạo prototype đơn giản với các thuộc tính và hàm đã học!</p>
+    </section>
+
+    <nav class="lesson-nav">
+      <a href="lesson3.html" class="nav-link">← Buổi 3: Game Bắn Súng</a>
+      <a href="lesson5.html" class="nav-link">Buổi 5: Tài Liệu Tham Khảo →</a>
+    </nav>
+  </main>
+</body>
+</html>
