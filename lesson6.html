@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dangerous Maze Nâng Cao - Buổi 6</title>
+  <link rel="stylesheet" href="style.css" />
+  <parameter name="mermaid-script">  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#111827",
+        primaryBorderColor: "#22d3ee",
+        primaryTextColor: "#e5e7eb",
+        lineColor: "#22d3ee",
+        secondaryColor: "#0b1222",
+        tertiaryColor: "#0b1222",
+        fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial",
+        fontSize: "16px",
+        labelBackground: "#1f2937",
+        labelTextColor: "#e5e7eb",
+        nodeBorder: "#22d3ee",
+        clusterBackground: "#0b1222",
+        clusterBorder: "#22d3ee"
+      }
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href="index.html">🏠 Trang chủ</a> > <span>Buổi 6</span>
+    </nav>
+
+    <h1>🎮 Dangerous Maze Nâng Cao - Buổi 6</h1>
+
+    <!-- 1) Mục tiêu -->
+    <section class="card">
+      <h2>1) 🎯 Mục tiêu buổi học</h2>
+      <p>Nâng cấp game Dangerous Maze với các tính năng nâng cao: bẫy di động, hệ thống điểm số, lives, và nhiều level khác nhau.</p>
+      <ul class="tips">
+        <li><strong>Tạo</strong> bẫy di động tự động theo đường ray hoặc pattern.</li>
+        <li><strong>Xây dựng</strong> hệ thống điểm số và mạng sống (lives).</li>
+        <li><strong>Thiết kế</strong> nhiều màn chơi (rooms) với độ khó tăng dần.</li>
+        <li><strong>Thêm</strong> hiệu ứng âm thanh và particle khi va chạm.</li>
+      </ul>
+    </section>
+
+    <!-- 2) Flowchart -->
+    <section class="card">
+      <h2>2) 🔍 Luồng hoạt động nâng cao</h2>
+      <div class="mermaid">
+flowchart TD
+  A["🚀 Bắt đầu game"] --> B["⚙️ Khởi tạo score, lives"]
+  B --> C["🏗️ Load màn chơi"]
+  C --> D["🎮 Điều khiển player"]
+  D --> E{"❓ Va chạm?"}
+  E -->|🧱 Tường| F["⛔ Chặn lại"]
+  E -->|⚠️ Bẫy| G["💥 Giảm lives"]
+  E -->|🏁 Đích| H["🎉 Tăng score"]
+  E -->|⭐ Coin| I["💰 Nhặt điểm"]
+  F --> D
+  G --> J{"❓ Lives > 0?"}
+  J -->|Có| K["🔄 Respawn"]
+  J -->|Không| L["💀 Game Over"]
+  K --> D
+  I --> D
+  H --> M{"❓ Còn màn?"}
+  M -->|Có| N["➡️ Màn tiếp theo"]
+  M -->|Không| O["🏆 Hoàn thành game"]
+  N --> C
+      </div>
+      <p class="note">📌 Nếu sơ đồ không hiện, kiểm tra mạng (cần tải Mermaid) hoặc thử trình duyệt khác.</p>
+    </section>
+
+    <!-- 3) Bẫy di động -->
+    <section class="card">
+      <h2>3) ⚡ Bẫy di động tự động</h2>
+      <p>Bẫy di động tạo thêm thử thách, yêu cầu người chơi tính toán thời điểm di chuyển.</p>
+
+      <h3>a) Bẫy di chuyển ngang/dọc</h3>
+      <pre><code>/// Create Event - obj_trap_moving
+move_speed = 2;
+move_dir = 1;  // 1: phải/xuống, -1: trái/lên
+start_x = x;   // Vị trí bắt đầu
+start_y = y;
+move_range = 128;  // Di chuyển 128 pixel rồi quay lại
+move_horizontal = true;  // true: ngang, false: dọc
+
+/// Step Event - obj_trap_moving
+if (move_horizontal) {
+    x += move_speed * move_dir;
+    // Đảo chiều khi đến giới hạn
+    if (abs(x - start_x) >= move_range) {
+        move_dir *= -1;
+    }
+} else {
+    y += move_speed * move_dir;
+    if (abs(y - start_y) >= move_range) {
+        move_dir *= -1;
+    }
+}</code></pre>
+
+      <h3>b) Bẫy di chuyển theo đường tròn</h3>
+      <pre><code>/// Create Event - obj_trap_circular
+center_x = x;
+center_y = y;
+radius = 64;
+angle = 0;
+rotate_speed = 2;
+
+/// Step Event - obj_trap_circular
+angle += rotate_speed;
+x = center_x + lengthdir_x(radius, angle);
+y = center_y + lengthdir_y(radius, angle);</code></pre>
+
+      <h3>c) Bẫy theo path (đường đi phức tạp)</h3>
+      <p>Tạo <strong>Path</strong> trong IDE, sau đó gán cho bẫy:</p>
+      <pre><code>/// Create Event - obj_trap_path
+// path_trap_route là path đã tạo trong IDE
+path_start(path_trap_route, 3, path_action_restart, true);</code></pre>
+
+      <h3>d) Va chạm với bẫy di động</h3>
+      <pre><code>/// Collision Event (obj_player with obj_trap_moving)
+// Giảm mạng
+global.lives -= 1;
+
+// Hiệu ứng rung màn hình
+screen_shake(10, 5);
+
+// Phát âm thanh
+audio_play_sound(snd_hit, 1, false);
+
+// Kiểm tra game over
+if (global.lives <= 0) {
+    show_message("💀 Hết mạng! Game Over!");
+    game_restart();
+} else {
+    // Respawn về vị trí ban đầu
+    x = global.start_x;
+    y = global.start_y;
+}</code></pre>
+    </section>
+
+    <!-- 4) Hệ thống điểm & lives -->
+    <section class="card">
+      <h2>4) 🏆 Hệ thống điểm số và mạng sống</h2>
+      
+      <h3>a) Khởi tạo biến toàn cục</h3>
+      <pre><code>/// Create Event - obj_game_controller
+global.score = 0;
+global.lives = 3;
+global.level = 1;
+global.start_x = 32;  // Vị trí respawn
+global.start_y = 32;</code></pre>
+
+      <h3>b) Hiển thị điểm số trên màn hình</h3>
+      <pre><code>/// Draw GUI Event - obj_game_controller
+draw_set_color(c_white);
+draw_set_font(fnt_ui);  // Font đã tạo trong IDE
+
+// Hiển thị lives
+draw_text(20, 20, "Lives: " + string(global.lives));
+
+// Hiển thị score
+draw_text(20, 50, "Score: " + string(global.score));
+
+// Hiển thị level
+draw_text(20, 80, "Level: " + string(global.level));</code></pre>
+
+      <h3>c) Tạo vật phẩm thu thập (coins)</h3>
+      <pre><code>/// Collision Event (obj_player with obj_coin)
+global.score += 10;
+audio_play_sound(snd_coin, 1, false);
+instance_destroy();  // Xóa coin sau khi nhặt</code></pre>
+
+      <h3>d) Điểm thưởng khi hoàn thành màn</h3>
+      <pre><code>/// Collision Event (obj_player with obj_goal)
+// Thưởng điểm dựa vào lives còn lại
+var bonus = global.lives * 100;
+global.score += bonus;
+
+show_message("🏆 Hoàn thành! Thưởng: " + string(bonus) + " điểm!");
+
+global.level += 1;
+
+// Chuyển màn tiếp theo
+if (room_exists(room_next)) {
+    room_goto_next();
+} else {
+    show_message("🎉 Chúc mừng! Bạn đã hoàn thành tất cả màn chơi!");
+    game_restart();
+}</code></pre>
+    </section>
+
+    <!-- 5) Nhiều màn chơi -->
+    <section class="card">
+      <h2>5) 🗺️ Thiết kế nhiều màn chơi</h2>
+      
+      <h3>a) Nguyên tắc thiết kế level</h3>
+      <ul class="tips">
+        <li><strong>Màn 1</strong>: Đơn giản, ít bẫy, giúp người chơi làm quen.</li>
+        <li><strong>Màn 2-3</strong>: Thêm bẫy di động, lối đi hẹp hơn.</li>
+        <li><strong>Màn 4+</strong>: Kết hợp nhiều loại bẫy, yêu cầu timing chính xác.</li>
+      </ul>
+
+      <h3>b) Tạo rooms và sắp xếp thứ tự</h3>
+      <ul class="tips">
+        <li>Tạo nhiều room: <code>rm_level1</code>, <code>rm_level2</code>, <code>rm_level3</code>...</li>
+        <li>Trong <strong>Room Manager</strong>, kéo thả để sắp xếp thứ tự đúng.</li>
+        <li>Đảm bảo mỗi room có <code>obj_game_controller</code> và <code>obj_player</code>.</li>
+      </ul>
+
+      <h3>c) Persistent objects</h3>
+      <p>Để giữ nguyên điểm số khi chuyển màn:</p>
+      <pre><code>/// Create Event - obj_game_controller
+persistent = true;  // Object không bị xóa khi đổi room</code></pre>
+
+      <h3>d) Reset khi game over</h3>
+      <pre><code>/// Game Over function
+function game_over() {
+    show_message("💀 Game Over!\nScore: " + string(global.score));
+    
+    // Reset biến
+    global.score = 0;
+    global.lives = 3;
+    global.level = 1;
+    
+    // Về màn đầu
+    room_goto(rm_level1);
+}</code></pre>
+    </section>
+
+    <!-- 6) Hiệu ứng nâng cao -->
+    <section class="card">
+      <h2>6) ✨ Hiệu ứng âm thanh và visual</h2>
+
+      <h3>a) Rung màn hình (screen shake)</h3>
+      <pre><code>/// Create Event - obj_camera_controller
+shake_magnitude = 0;
+shake_duration = 0;
+
+function screen_shake(magnitude, duration) {
+    shake_magnitude = magnitude;
+    shake_duration = duration;
+}
+
+/// Step Event - obj_camera_controller
+if (shake_duration > 0) {
+    shake_duration -= 1;
+    
+    // Tạo offset ngẫu nhiên
+    var shake_x = random_range(-shake_magnitude, shake_magnitude);
+    var shake_y = random_range(-shake_magnitude, shake_magnitude);
+    
+    // Di chuyển camera
+    camera_set_view_pos(view_camera[0], 
+        shake_x, shake_y);
+} else {
+    // Về vị trí bình thường
+    camera_set_view_pos(view_camera[0], 0, 0);
+    shake_magnitude = 0;
+}</code></pre>
+
+      <h3>b) Particle khi chạm bẫy</h3>
+      <pre><code>/// Create Event - obj_player
+// Tạo particle system
+part_sys = part_system_create();
+part_type = part_type_create();
+
+// Cấu hình particle
+part_type_shape(part_type, pt_shape_spark);
+part_type_size(part_type, 0.1, 0.3, -0.01, 0);
+part_type_color1(part_type, c_red);
+part_type_alpha2(part_type, 1, 0);
+part_type_speed(part_type, 2, 5, -0.1, 0);
+part_type_direction(part_type, 0, 360, 0, 0);
+part_type_life(part_type, 20, 40);
+
+/// Khi chạm bẫy
+function create_hit_effect() {
+    part_particles_create(part_sys, x, y, part_type, 20);
+}</code></pre>
+
+      <h3>c) Thêm âm thanh</h3>
+      <pre><code>/// Các sự kiện cần âm thanh
+// Nhặt coin
+audio_play_sound(snd_coin, 1, false);
+
+// Chạm bẫy
+audio_play_sound(snd_hit, 1, false);
+
+// Hoàn thành màn
+audio_play_sound(snd_victory, 1, false);
+
+// Background music (lặp lại)
+audio_play_sound(snd_bgm, 1, true);</code></pre>
+    </section>
+
+    <!-- 7) Tối ưu hóa -->
+    <section class="card">
+      <h2>7) ⚙️ Tối ưu hóa và debug</h2>
+
+      <h3>a) Debug mode</h3>
+      <pre><code>/// Create Event - obj_game_controller
+global.debug_mode = false;
+
+/// Step Event
+if (keyboard_check_pressed(vk_f1)) {
+    global.debug_mode = !global.debug_mode;
+}
+
+/// Draw Event - obj_player (nếu debug mode)
+if (global.debug_mode) {
+    draw_set_color(c_lime);
+    draw_rectangle(bbox_left, bbox_top, bbox_right, bbox_bottom, true);
+    draw_text(x, y - 20, "Speed: " + string(speed));
+}</code></pre>
+
+      <h3>b) Cheat codes để test</h3>
+      <pre><code>/// Step Event - obj_game_controller
+// Nhấn F2 để invincible
+if (keyboard_check_pressed(vk_f2)) {
+    global.invincible = !global.invincible;
+}
+
+// Nhấn F3 để skip level
+if (keyboard_check_pressed(vk_f3)) {
+    room_goto_next();
+}
+
+// Nhấn F4 để +1000 điểm
+if (keyboard_check_pressed(vk_f4)) {
+    global.score += 1000;
+}</code></pre>
+
+      <h3>c) Giảm collision checks</h3>
+      <pre><code>/// Thay vì check collision mỗi frame, cache kết quả
+var check_collision_timer = 0;
+var is_on_ground = false;
+
+if (check_collision_timer <= 0) {
+    is_on_ground = place_meeting(x, y + 1, obj_wall);
+    check_collision_timer = 3;  // Check mỗi 3 frames
+} else {
+    check_collision_timer -= 1;
+}</code></pre>
+    </section>
+
+    <!-- 8) Mẹo nâng cao -->
+    <section class="card">
+      <h2>8) 💡 Mẹo nâng cao</h2>
+      <ul class="tips">
+        <li><strong>Checkpoint</strong>: Tạo <code>obj_checkpoint</code> để lưu vị trí, người chơi respawn tại đó thay vì về đầu màn.</li>
+        <li><strong>Timer</strong>: Thêm đồng hồ đếm ngược, hoàn thành nhanh được điểm thưởng.</li>
+        <li><strong>Power-ups</strong>: Tạo vật phẩm tăng tốc độ, invincible tạm thời, hoặc slow-motion.</li>
+        <li><strong>Leaderboard</strong>: Lưu high score vào file hoặc ini để so sánh.</li>
+        <li><strong>Tutorial</strong>: Tạo room hướng dẫn trước màn 1 với text và mũi tên chỉ dẫn.</li>
+      </ul>
+
+      <h3>Ví dụ: Checkpoint system</h3>
+      <pre><code>/// Collision Event (obj_player with obj_checkpoint)
+if (!activated) {
+    global.checkpoint_x = x;
+    global.checkpoint_y = y;
+    activated = true;
+    sprite_index = spr_checkpoint_active;
+    audio_play_sound(snd_checkpoint, 1, false);
+}
+
+/// Khi respawn
+x = global.checkpoint_x;
+y = global.checkpoint_y;</code></pre>
+    </section>
+
+    <!-- 9) Lỗi thường gặp -->
+    <section class="card">
+      <h2>9) 🚫 Lỗi thường gặp và cách sửa</h2>
+      <ul class="tips">
+        <li><strong>Bẫy di động xuyên tường</strong>: Thêm <code>place_meeting()</code> cho bẫy, đảo chiều khi chạm tường.</li>
+        <li><strong>Lives âm</strong>: Thêm check <code>if (global.lives > 0)</code> trước khi giảm.</li>
+        <li><strong>Score không lưu khi chuyển màn</strong>: Dùng <code>global.</code> cho biến hoặc set <code>persistent = true</code> cho controller.</li>
+        <li><strong>Âm thanh chồng chéo</strong>: Dùng <code>audio_stop_sound()</code> trước khi play lại.</li>
+        <li><strong>Particle không xuất hiện</strong>: Kiểm tra đã tạo system và type chưa, gọi <code>part_particles_create()</code> đúng vị trí.</li>
+      </ul>
+    </section>
+
+    <!-- 10) Tóm tắt -->
+    <section class="card">
+      <h2>10) 🎯 Tóm tắt buổi học</h2>
+      <p>Trong buổi học này, chúng ta đã học được:</p>
+      <ul class="tips">
+        <li>✅ Tạo <strong>bẫy di động</strong> với nhiều pattern khác nhau (ngang/dọc, tròn, path).</li>
+        <li>✅ Xây dựng <strong>hệ thống điểm số, lives</strong> và hiển thị lên màn hình.</li>
+        <li>✅ Thiết kế <strong>nhiều màn chơi</strong> với độ khó tăng dần và persistent data.</li>
+        <li>✅ Thêm <strong>hiệu ứng</strong> như screen shake, particles, và âm thanh.</li>
+        <li>✅ Tối ưu hóa game với <strong>debug mode</strong> và cheat codes.</li>
+      </ul>
+      <p><strong>Bài tập về nhà:</strong> Tạo ít nhất 3 màn chơi hoàn chỉnh với độ khó tăng dần. Thêm checkpoint system và ít nhất 1 loại power-up (ví dụ: shield hoặc speed boost). Tạo màn hình menu đơn giản với nút Start và Quit.</p>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="lesson-nav">
+      <a href="lesson5.html" class="nav-link">← Buổi 5: Platformer cơ bản</a>
+      <a href="lesson7.html" class="nav-link">Buổi 7: AI và Enemy Behaviors →</a>
+    </nav>
+  </main>
+</body>
+</html>
